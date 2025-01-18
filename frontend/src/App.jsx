@@ -1,33 +1,30 @@
 import { Navigate, Route, Routes } from "react-router";
 import HomeScreen from "./Pages/HomeScreen";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { useAuthContext } from "./Context/authContext";
 import GameScreen from "./Pages/GameScreen";
 import ResultScreen from "./Pages/ResultScreen";
 
 function App() {
-  const context = useAuthContext();
-  const { authUser } = context;
-  const [screen, setScreen] = useState("start");
-  const [username, setUsername] = useState("");
-  const [question, setQuestion] = useState("");
+  const [players, setPlayers] = useState([]);
   const [results, setResults] = useState([]);
 
-  const handleStartGame = (enteredUsername) => {
-    setUsername(enteredUsername); // Save the username
-    setQuestion("What is the most impactful invention of the 21st century?");
-    setScreen("game");
+  const handleStartGame = (enlistedPlayers) => {
+    setPlayers(enlistedPlayers);
+  };
+
+  const resetGame = () => {
+    setPlayers([]);
+    setResults([]);
   };
 
   const handleJudgeAnswers = (judgedResults) => {
     setResults(
       judgedResults.map((result, index) => ({
         ...result,
-        name: index === 0 ? username : result.name, // Assign username to the first user
+        name: players[index],
       }))
     );
-    setScreen("results");
   };
 
   return (
@@ -36,14 +33,20 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={authUser ? <Navigate to={"/game"} /> : <HomeScreen onStartGame={handleStartGame}/>}
+          element={
+            players.length === 0 ? (
+              <HomeScreen onStartGame={handleStartGame} />
+            ) : (
+              <Navigate to={"/game"} />
+            )
+          }
         />
         <Route
           path="/game"
           element={
-            authUser ? (
+            players.length > 0 ? (
               <GameScreen
-                question={question}
+                players={players}
                 onJudgeAnswers={handleJudgeAnswers}
               />
             ) : (
@@ -54,8 +57,8 @@ function App() {
         <Route
           path="/result"
           element={
-            authUser ? (
-              <ResultScreen results={results} />
+            players.length > 0 ? (
+              <ResultScreen results={results} resetGame={resetGame} />
             ) : (
               <Navigate to={"/"} />
             )
@@ -65,4 +68,5 @@ function App() {
     </div>
   );
 }
+
 export default App;

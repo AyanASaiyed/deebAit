@@ -1,21 +1,28 @@
 import { useState } from "react";
-import useLogin from "../Hooks/useLogin";
+import toast from "react-hot-toast";
+import { usePlayers } from "../Hooks/usePlayers";
 
-const HomeScreen = ({onStartGame}) => {
-  const [username, setUsername] = useState();
+const HomeScreen = ({ onStartGame }) => {
+  const [username, setUsername] = useState("");
+  const [players, setPlayers] = useState([]);
+  const persons = usePlayers();
 
-  const login = useLogin();
+  const handleJoin = () => {
+    setPlayers((prevPlayers) => [...prevPlayers, username]);
+    setUsername("");
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (players.length === 0) {
+      toast.error("Please Enter Atleast 1 Player");
+      return;
+    }
+
     try {
-      login(username);
-      console.log("login success");
-      if (username.trim() === "") {
-        alert("Please enter a username to continue.");
-        return;
-      }
-      onStartGame(username);
+      console.log("Login success");
+      persons(players);
+      onStartGame(players);
     } catch (error) {
       console.log("Error in HomeScreen Login: ", error.message);
     }
@@ -27,20 +34,45 @@ const HomeScreen = ({onStartGame}) => {
         Welcome to Deeb<span className="text-blue-500">Ai</span>t!
       </div>
       <div className="h-[80vh] w-[80vw] rounded-xl mt-5 bg-blue-500 bg-opacity-15 border-4 border-white flex-col flex">
-        <div className="flex items-center justify-center h-screen flex-col space-y-2">
+        <div className="flex items-center justify-center h-screen flex-col space-y-4">
+          <div className="text-xl font-mono text-black mb-4">
+            {players.length > 0 ? (
+              <ul>
+                {players.map((player, index) => (
+                  <li
+                    key={index}
+                    className="text-2xl h-[4vh] bg-slate-400 border-2 border-white rounded-xl p-1 mt-2"
+                  >
+                    {player}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No players joined yet.</p>
+            )}
+          </div>
+
           <form onSubmit={handleLogin} className="flex flex-col p-10">
             <input
               className="rounded-xl h-[10vh] w-[30vw] text-3xl font-mono p-3"
               value={username}
               placeholder="Enter Username"
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
+              onChange={(e) => setUsername(e.target.value)}
             />
-            <button className="rounded-xl bg-green-700 text-white font-mono text-3xl p-4 mt-10 hover:bg-green-900">
+            <button
+              type="submit"
+              className="rounded-xl bg-green-700 text-white font-mono text-3xl p-4 mt-10 hover:bg-green-900"
+            >
               Start Game
             </button>
           </form>
+
+          <button
+            onClick={handleJoin}
+            className="rounded-xl bg-blue-700 text-white font-mono text-3xl p-4 mt-10 hover:bg-blue-900"
+          >
+            Join
+          </button>
         </div>
       </div>
     </div>

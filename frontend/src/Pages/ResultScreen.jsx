@@ -1,12 +1,11 @@
-import { useAuthContext } from "../Context/authContext";
 import { useNavigate } from "react-router-dom";
-import { useLogout } from "../Hooks/useLogout";
 
-const ResultsPage = ({ results }) => {
-  const logout = useLogout();
+const ResultsPage = ({ results, resetGame }) => {
+  const navigate = useNavigate();
   const handleReplay = async (e) => {
     try {
-      logout();
+      resetGame();
+      navigate("/");
     } catch (error) {
       console.log("Error Restarting Game: ", error.message);
     }
@@ -33,7 +32,7 @@ const ResultsPage = ({ results }) => {
 
       <button
         type="button"
-        onClick={handleReplay} // Restart the game
+        onClick={handleReplay}
         className="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded shadow-md transition"
       >
         Play Again
