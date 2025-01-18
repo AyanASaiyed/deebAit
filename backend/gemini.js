@@ -6,10 +6,10 @@ const router = express.Router();
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 const prompt =
-  "You are an 21st century courtroom judge, and there are some lawyers in your courtroom. To test these lawyers are capable, generate an open ended question open to many interpretations. Afterwards, you will receive their opinions, and you will rate them best from best to worst based on their logic, reasoning, and explanation/justification. Ask just the question itself and get straight to the point. Ask unique questions. Make the questions not too serious and make them a little silly/funny.";
+  "You are an 21st century courtroom judge, and there are some lawyers in your courtroom. To test these lawyers are capable, generate an open ended question open to many interpretations. Afterwards, you will receive their opinions, and you will rate them best from best to worst based on their logic, reasoning, and explanation/justification. Ask just the question itself and get straight to the point. Ask unique questions. Make the questions not too serious and make them a little silly/funny. Do not make the questions based off politics or the law.";
 
 const result = await model.generateContent(prompt);
 const question = result.response.text();
@@ -29,11 +29,35 @@ router.post("/generate-question", async (req, res) => {
 router.post("/generate-verdict", async (req, res) => {
   try {
     const { opinions } = req.body;
-    const prompt = `Here are the lawyer's opinions: ${opinions.join(
-      " "
-    )}. Please give us your thoughts on each response and do not go above 2 sentences. And return a list from the best response to the worst response. If the atleast one of the inputs is bad, rank ONLY that one. The "best" response is the response that makes the most sense and is the most logical out of the bunch even if the bunch is all meaningless or similiar. if the responses are not even correlated to the question, they are deemed bad `;
+
+    // Format the opinions into a numbered list
+    const opinionList = opinions
+      .map((opinion, index) => `${index + 1}. ${opinion}`)
+      .join(" ");
+
+    // Modified prompt to instruct the AI to rank the responses individually
+    const prompt = `
+        Here are the lawyer's opinions:
+        ${opinionList}
+        
+        Please evaluate each response independently, ranking them from the best to the worst based on logical reasoning, clarity, and relevance. The "best" response is the one that makes the most sense and is the most logical. 
+        If any responses are irrelevant to the question or do not make sense, rank them as the worst. Return a ranking with the format: 
+        { 1: {index of the best response}, 2: {index of the second-best}, 3: {index of the third-best}, ... }. The justifications should be concise and to the point and not more than 2 sentences. Provide each reasoning on a new line along with the ranking on a new line.
+         
+        
+        For example, if the responses are:
+        1. Opinion 1
+        2. Opinion 2
+        3. Opinion 3
+        
+        Your response should look like this on a new line with a space in between:
+        RANKING: { 1: 2, 2: 1, 3: 3 }
+      `;
+
     const result = await model.generateContent(prompt);
     const verdict = result.response.text();
+
+    // Send the ranking as JSON
     res.status(200).json({ verdict });
   } catch (error) {
     console.error("Error generating verdict:", error.message);

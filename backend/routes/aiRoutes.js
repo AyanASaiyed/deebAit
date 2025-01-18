@@ -28,15 +28,4 @@ aiRouter.post("/generate-verdict", async (req, res) => {
   }
 });
 
-aiRouter.post("/generate-ranking", async (req, res) => {
-  try {
-    const { opinions } = req.body;
-    const ranking = await generate_ranking(opinions);
-    res.status(200).json({ ranking });
-  } catch (error) {
-    console.error("Error generating ranking:", error.message);
-    res.status(500).json({ error: "Failed to generate ranking" });
-  }
-});
-
 export default aiRouter;
