@@ -32,21 +32,25 @@ const GameScreen = ({ question, onJudgeAnswers }) => {
     const dummyResults = [
       {
         name: "Alice",
+        id: 1,
         score: 95,
         answer: "AI is the most impactful invention.",
       },
       {
         name: "Bob",
+        id: 2,
         score: 89,
         answer: "Renewable energy advancements have had a massive impact.",
       },
       {
         name: "Charlie",
+        id: 3,
         score: 85,
         answer: "Smartphones revolutionized communication.",
       },
       {
         name: "Dana",
+        id: 4,
         score: 80,
         answer: "Space exploration innovations define this century.",
       },

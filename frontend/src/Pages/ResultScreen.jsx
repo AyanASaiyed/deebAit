@@ -9,7 +9,7 @@ const ResultsPage = ({ results }) => {
       <div className="w-3/4 bg-white shadow-md rounded-lg p-6">
         <ol className="list-decimal list-inside space-y-4">
           {results.map((result, index) => (
-            <li key={index} className="text-gray-800">
+            <li key={result.id} className="text-gray-800">
               <p className="text-xl font-semibold">
                 {result.name || `Participant ${index + 1}`}
               </p>
