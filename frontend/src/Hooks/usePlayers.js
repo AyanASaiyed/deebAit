@@ -4,21 +4,23 @@ export const usePlayers = () => {
       const res = await fetch("http://localhost:4000/auth/players", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(players),
+        body: JSON.stringify({ persons: players }),
       });
+
+      console.log(res);
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error.message);
+        throw new Error(err.error);
       }
 
       const data = await res.json();
 
       sessionStorage.setItem("players", players);
-      console.log(players);
+      console.log("PLAYERS: ", players);
       console.log("DATA: ", data);
     } catch (error) {
-      console.log("Error in Players Hook: ", error.message);
+      console.log("Error in Players Hook: ", error);
     }
   };
 

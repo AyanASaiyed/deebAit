@@ -23,7 +23,7 @@ const ResultsPage = ({ results, resetGame }) => {
               <p className="text-xl font-semibold">
                 {result.name || `Participant ${index + 1}`}
               </p>
-              <p className="text-gray-600">Score: {result.score}</p>
+              <p className="text-gray-600">Response: {result.score}</p>
               <p className="text-gray-500 italic">{result.answer}</p>
             </li>
           ))}

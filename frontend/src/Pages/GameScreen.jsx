@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAnswers } from "../Hooks/useAnswers";
 
 const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
+  const responses = useAnswers();
   const [answer, setAnswer] = useState("");
   const [timeLeft, setTimeLeft] = useState(120);
   const [submissions, setSubmissions] = useState(0);
@@ -35,6 +37,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   };
 
   const handleJudging = () => {
+    responses(answers);
     onJudgeAnswers(answers);
     navigate("/result");
   };
