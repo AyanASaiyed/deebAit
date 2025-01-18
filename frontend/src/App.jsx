@@ -1,16 +1,34 @@
-import HomeScreen from "./Pages/HomeScreen";
+import { useState } from "react";
+import StartGame from "./Pages/HomeScreen";
+import GameScreen from "./Pages/GameScreen";
+import ResultsPage from "./Pages/ResultScreen";
 
-function App() {
+const App = () => {
+  const [screen, setScreen] = useState("start");
+  const [question, setQuestion] = useState("");
+  const [results, setResults] = useState([]);
+
+  const handleStartGame = () => {
+    const generatedQuestion =
+      "What is the most impactful invention of the 21st century?";
+    setQuestion(generatedQuestion);
+    setScreen("game");
+  };
+
+  const handleJudgeAnswers = (judgedResults) => {
+    setResults(judgedResults);
+    setScreen("results");
+  };
+
   return (
-    <div className="flex justify-center items-center flex-col p-10">
-      <div className="text-white font-mono text-5xl mt-10">
-        Welcome to Deeb<span className="text-blue-500">Ai</span>t!
-      </div>
-      <div className="h-[80vh] w-[80vw] rounded-xl mt-5 bg-slate-400 bg-opacity-15 border-4 border-white">
-        <HomeScreen />
-      </div>
+    <div>
+      {screen === "start" && <StartGame onStartGame={handleStartGame} />}
+      {screen === "game" && (
+        <GameScreen question={question} onJudgeAnswers={handleJudgeAnswers} />
+      )}
+      {screen === "results" && <ResultsPage results={results} />}
     </div>
   );
-}
+};
 
 export default App;
