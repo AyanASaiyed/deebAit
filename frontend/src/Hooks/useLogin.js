@@ -18,9 +18,11 @@ const useLogin = () => {
 
       console.log(data);
 
-      localStorage.setItem("username", JSON.stringify(data));
+      sessionStorage.setItem("username", JSON.stringify(data.username));
       toast.success("Game Entered!");
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error in login hook, ", error.message);
+    }
   };
 
   return login;
