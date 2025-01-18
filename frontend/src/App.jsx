@@ -2,7 +2,7 @@ import HomeScreen from "./Pages/HomeScreen";
 
 function App() {
   return (
-    <div className="flex justify-center items-center flex-col p-10">
+    <div className="flex justify-center items-center flex-col">
       <div className="text-white font-mono text-5xl mt-10">
         Welcome to Deeb<span className="text-blue-500">Ai</span>t!
       </div>
