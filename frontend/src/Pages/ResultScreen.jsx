@@ -1,8 +1,15 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const ResultsPage = ({ results, resetGame }) => {
+const ResultsPage = ({ resetGame }) => {
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const handleReplay = async (e) => {
+  const { verdict, answers, players } = state || {
+    verdict: "",
+    answers: [],
+    players: [],
+  };
+
+  const handleReplay = async () => {
     try {
       resetGame();
       navigate("/");
@@ -18,16 +25,20 @@ const ResultsPage = ({ results, resetGame }) => {
 
       <div className="w-3/4 bg-white shadow-md rounded-lg p-6">
         <ol className="list-decimal list-inside space-y-4">
-          {results.map((result, index) => (
+          {answers.map((result, index) => (
             <li key={index} className="text-gray-800">
               <p className="text-xl font-semibold">
-                {result.name || `Participant ${index + 1}`}
+                {players[index] || `Participant ${index + 1}`}
               </p>
-              <p className="text-gray-600">Response: {result.score}</p>
-              <p className="text-gray-500 italic">{result.answer}</p>
+              <p className="text-gray-600">Response: {result.answer}</p>
             </li>
           ))}
         </ol>
+
+        <h2 className="mt-6 text-xl font-semibold text-gray-700">
+          Judge's Verdict:
+        </h2>
+        <p className="text-gray-800 mt-2">{verdict}</p>
       </div>
 
       <button

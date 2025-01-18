@@ -11,54 +11,50 @@ const generativeModel = vertexAI.getGenerativeModel({
   model: "gemini-1.5-flash-001",
 });
 
-async function init_gemini_bot() {
+export async function init_gemini_bot() {
   let prompt =
-    "You are an 18th century courtroom judge, and four lawyers are in your courtroom. To test these lawyers are capable, generate an open ended question open to many interpretations. Afterwards, you will recieve their opinions, and you will rate them best from 1 to 4 based on their logic. Act flamboyant and fancy";
-  prompt += "do not add any formatting to your text. ";
-
-  const resp = await generativeModel.generateContent(prompt);
-  const contentResponse = await resp.response;
-  console.log(contentResponse.candidates[0].content.parts[0].text);
+    "You are an 21st century courtroom judge, and there are some lawyers in your courtroom. To test these lawyers are capable, generate an open ended question open to many interpretations. Afterwards, you will receive their opinions, and you will rate them best from best to worst based on their logic, reasoning, and explanation/justification. Ask just the question itself and get straight to the point.";
+  try {
+    const resp = await generativeModel.generateContent(prompt);
+    const contentResponse = resp.response;
+    return contentResponse.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error("Error in init_gemini_bot:", error.message);
+    throw error;
+  }
 }
 
-async function generate_verdict(opinions) {
+export async function generate_verdict(opinions) {
   let prompt = "Here are the lawyer's opinions: ";
-  for (let i = 1; i <= 4; i++) {
-    const opinion = String(i) + ". " + opinions[i - 1];
-    prompt += opinion;
+  for (let i = 1; i <= opinions.length; i++) {
+    prompt += `${i}. ${opinions[i - 1]} `;
   }
   prompt +=
-    "Please give us your thoughts, your holiness. Do not go above 150 words per opinion, and feel free to talk about anything. make sure to hate one. ";
-  const resp = await generativeModel.generateContent(prompt);
-  const contentResponse = await resp.response;
-  console.log(contentResponse.candidates[0].content.parts[0].text);
+    "Please give us your thoughts, your holiness. Do not go above 150 words per opinion, and feel free to talk about anything. Make sure to dislike one.";
+  try {
+    const resp = await generativeModel.generateContent(prompt);
+    const contentResponse = resp.response;
+    return contentResponse.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error("Error in generate_verdict:", error.message);
+    throw error;
+  }
 }
 
-async function generate_ranking(opinions) {
+export async function generate_ranking(opinions) {
   let prompt = "Here are the lawyer's opinions once again to remind you: ";
-  for (let i = 1; i <= 4; i++) {
-    const opinion = String(i) + ". " + opinions[i - 1];
-    prompt += opinion;
+  for (let i = 1; i <= opinions.length; i++) {
+    prompt += `${i}. ${opinions[i - 1]} `;
   }
   prompt +=
-    "RETURN ONLY a json of your rankings in the following format. {1: {the index of the best opinion}, 2: {etc}, 3: {}, 4: {}}";
+    "RETURN ONLY a JSON of your rankings in the following format: {1: {index of the best opinion}, 2: {etc}, 3: {}, 4: {}}";
 
-  const resp = await generativeModel.generateContent(prompt);
-  const contentResponse = await resp.response;
-  console.log(contentResponse.candidates[0].content.parts[0].text);
+  try {
+    const resp = await generativeModel.generateContent(prompt);
+    const contentResponse = resp.response;
+    return contentResponse.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error("Error in generate_ranking:", error.message);
+    throw error;
+  }
 }
-
-async function main() {
-  await init_gemini_bot();
-  let opinions = [
-    "I think this experience has been absolutely transformative, and I can't believe how much I've learned from it so far. It's definitely opened up new perspectives for me.",
-    "Honestly, it's hard for me to get on board with this idea. While I can see why some people might enjoy it, I just don't think it aligns with my preferences at all.",
-    "The way everything came together was just perfect, and I couldn't have asked for a better outcome. It's rare to find something that clicks so well with everything I love.",
-    "I'm not entirely sure how to feel about this. On one hand, I can appreciate the effort put into it, but on the other hand, it seems to miss the mark in terms of what I was hoping for.",
-  ];
-
-  await generate_verdict(opinions);
-  await generate_ranking(opinions);
-}
-
-main();

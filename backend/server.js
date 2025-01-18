@@ -3,7 +3,9 @@ import cors from "cors";
 import "dotenv/config";
 import session from "express-session";
 import authRoutes from "./routes/authRoutes.js";
+//import aiRoutes from "./routes/aiRoutes.js";
 import answerRoutes from "./routes/answerRoutes.js";
+import { gemRouter } from "./gemini.js";
 
 const app = express();
 
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/auth", authRoutes);
+app.use("/ai", gemRouter);
 app.use("/answers", answerRoutes);
 
 app.listen(PORT, () => {

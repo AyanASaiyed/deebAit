@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAnswers } from "../Hooks/useAnswers";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   const responses = useAnswers();
@@ -8,7 +8,31 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   const [timeLeft, setTimeLeft] = useState(120);
   const [submissions, setSubmissions] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const [question, setQuestion] = useState("Loading question...");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/ai/generate-question", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error);
+        }
+        const data = await res.json();
+        setQuestion(data.question);
+      } catch (error) {
+        console.error("Error fetching question: ", error.message);
+        setQuestion("Failed to load question. Please refresh.");
+      }
+    };
+
+    fetchQuestion();
+  }, []);
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -36,15 +60,39 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
     setAnswer("");
   };
 
-  const handleJudging = () => {
-    responses(answers);
+  const handleJudging = async () => {
+    responses(answers, players);
     onJudgeAnswers(answers);
-    navigate("/result");
+
+    try {
+      // Send the answers to the backend to generate a verdict
+      const res = await fetch("http://localhost:4000/ai/generate-verdict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          opinions: answers.map((answer) => answer.answer), // Extract the answers as opinions
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error);
+      }
+
+      const data = await res.json();
+      // Pass the verdict along with the answers to the ResultsPage
+      navigate("/result", {
+        state: { verdict: data.verdict, answers: answers, players: players },
+      });
+    } catch (error) {
+      console.error("Error generating verdict: ", error.message);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Question</h2>
+      <p className="text-lg text-gray-600 mb-8 text-center">{question}</p>
       <p className="text-lg text-gray-600 mb-8 text-center">
         Player: {players[submissions]}
       </p>
