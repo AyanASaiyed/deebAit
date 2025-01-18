@@ -1,6 +1,8 @@
 import toast from "react-hot-toast";
+import { useAuthContext } from "../Context/authContext";
 
 const useLogin = () => {
+  const { setAuthUser } = useAuthContext();
   const login = async (username) => {
     try {
       const res = await fetch("http://localhost:4000/auth/login", {
@@ -19,8 +21,10 @@ const useLogin = () => {
       console.log(data);
 
       sessionStorage.setItem("username", JSON.stringify(data.username));
+      setAuthUser(data);
       toast.success("Game Entered!");
     } catch (error) {
+      toast.error(error.message);
       console.log("Error in login hook, ", error.message);
     }
   };

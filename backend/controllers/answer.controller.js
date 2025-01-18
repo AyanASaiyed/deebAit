@@ -19,6 +19,7 @@ export const setAnswers = async (req, res) => {
 
 export const getAnswers = async (req, res) => {
   try {
+    const user = req.session.answer;
   } catch (error) {
     console.log("error in getting answer: ", error.message);
     return res
