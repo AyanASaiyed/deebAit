@@ -41,7 +41,7 @@ const HomeScreen = ({ onStartGame }) => {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col overflow-scroll">
+    <div className="flex justify-center items-center flex-col">
       <div className="text-black font-bold font-mono text-5xl mt-10">
         Welcome to Deeb<span className="text-blue-500">Ai</span>t!
       </div>
