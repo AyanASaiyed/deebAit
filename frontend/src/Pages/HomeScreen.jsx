@@ -31,14 +31,6 @@ const HomeScreen = ({ onStartGame }) => {
       return;
     }
 
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      `You have ${players.length} player(s). Are you sure you want to start the game?`
-    );
-    if (!confirmed) {
-      return; // Exit if the user cancels
-    }
-
     try {
       console.log("Login success");
       persons(players);
