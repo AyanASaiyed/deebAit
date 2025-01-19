@@ -2,7 +2,7 @@ import { useAnswers } from "../Hooks/useAnswers";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
+const GameScreen = ({ players, onJudgeAnswers }) => {
   const responses = useAnswers();
   const [answer, setAnswer] = useState("");
   const [timeLeft, setTimeLeft] = useState(120);
@@ -66,7 +66,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   };
 
   const handleJudging = async () => {
-    responses(answers, players);
+    responses(answers);
     onJudgeAnswers(answers);
 
     try {
@@ -76,6 +76,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
         body: JSON.stringify({
           opinions: answers.map((answer) => answer.answer),
           question,
+          players,
         }),
       });
 
@@ -85,7 +86,6 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
       }
 
       const data = await res.json();
-      // Pass the verdict along with the answers to the ResultsPage
       navigate("/result", {
         state: {
           verdict: data.verdict,

@@ -1,12 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
-const ResultsPage = ({ resetGame }) => {
+const ResultsPage = ({ resetGame, players }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { verdict, answers, players } = state || {
+  const { verdict, answers } = state || {
     verdict: "",
     answers: [],
-    players: [],
   };
 
   const handleReplay = async () => {
@@ -17,6 +16,12 @@ const ResultsPage = ({ resetGame }) => {
       console.log("Error Restarting Game: ", error.message);
     }
   };
+
+  const highlightEndIndex = verdict.indexOf("}") + 1;
+  const highlightedText =
+    highlightEndIndex > 0 ? verdict.slice(0, highlightEndIndex) : "";
+  const remainingText =
+    highlightEndIndex > 0 ? verdict.slice(highlightEndIndex) : verdict;
 
   return (
     <div className="flex justify-center items-center h-screen">
