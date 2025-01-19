@@ -2,7 +2,7 @@ import { useAnswers } from "../Hooks/useAnswers";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
+const GameScreen = ({ players, onJudgeAnswers }) => {
   const responses = useAnswers();
   const [answer, setAnswer] = useState("");
   const [timeLeft, setTimeLeft] = useState(120);
@@ -61,7 +61,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   };
 
   const handleJudging = async () => {
-    responses(answers, players);
+    responses(answers);
     onJudgeAnswers(answers);
 
     try {

@@ -17,8 +17,7 @@ const ResultsPage = ({ resetGame, players }) => {
     }
   };
 
-  // Find the index of the specific character
-  const highlightEndIndex = verdict.indexOf("}") + 1; // Include the character
+  const highlightEndIndex = verdict.indexOf("}") + 1;
   const highlightedText =
     highlightEndIndex > 0 ? verdict.slice(0, highlightEndIndex) : "";
   const remainingText =
