@@ -19,7 +19,7 @@ router.post("/generate-question", async (req, res) => {
   try {
     const result = await model.generateContent(prompt);
     const question = result.response.text();
-    res.status(200).json({ question });
+    return res.status(200).json({ question });
   } catch (error) {
     console.error("Error generating question:", error.message);
     res.status(500).json({ error: "Failed to generate question" });
@@ -28,19 +28,20 @@ router.post("/generate-question", async (req, res) => {
 
 router.post("/generate-verdict", async (req, res) => {
   try {
-    const { opinions } = req.body;
+    const { opinions, question } = req.body;
 
-    // Format the opinions into a numbered list
+    console.log(question);
     const opinionList = opinions
       .map((opinion, index) => `${index + 1}. ${opinion}`)
       .join(" ");
 
-    // Modified prompt to instruct the AI to rank the responses individually
     const prompt = `
         Here are the lawyer's opinions:
         ${opinionList}
         
-        Please evaluate each response independently, ranking them from the best to the worst based on logical reasoning, clarity, and relevance. The "best" response is the one that makes the most sense and is the most logical. 
+        and here is the question: ${question},
+
+        Please evaluate each response independently in accordance to the question, ranking them from the best to the worst based on logical reasoning, clarity, and relevance. The "best" response is the one that makes the most sense and is the most logical in accordance to the question. 
         If any responses are irrelevant to the question or do not make sense, rank them as the worst. Return a ranking with the format: 
         { 1: {index of the best response}, 2: {index of the second-best}, 3: {index of the third-best}, ... }. The justifications should be concise and to the point and not more than 2 sentences. Provide each reasoning on a new line along with the ranking on a new line.
          

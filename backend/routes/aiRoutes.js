@@ -2,7 +2,6 @@ import express from "express";
 import {
   init_gemini_bot,
   generate_verdict,
-  generate_ranking,
 } from "../googleCloud.js";
 
 const aiRouter = express.Router();
