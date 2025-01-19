@@ -52,12 +52,23 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
       alert("Answer cannot be empty!");
       return;
     }
+
+    // Ask for confirmation
+    const confirmed = window.confirm(
+      `Are you sure you want to submit your answer: "${answer}"?`
+    );
+
+    if (!confirmed) {
+      return; // Exit if the user cancels
+    }
+
+    // Add the answer to the answers array
     setAnswers((prevAnswers) => [
       ...prevAnswers,
       { player: players[submissions], answer },
     ]);
     setSubmissions((prev) => prev + 1);
-    setAnswer("");
+    setAnswer(""); // Clear the input
   };
 
   const handleJudging = async () => {

@@ -8,15 +8,35 @@ const HomeScreen = ({ onStartGame }) => {
   const persons = usePlayers();
 
   const handleJoin = () => {
-    setPlayers((prevPlayers) => [...prevPlayers, username]);
+    if (username.trim() === "") {
+      toast.error("Username cannot be empty!");
+      return;
+    }
+    setPlayers((prevPlayers) => [...prevPlayers, username.trim()]);
     setUsername("");
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission
+      handleJoin();
+    }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (players.length === 0) {
       toast.error("Please Enter Atleast 1 Player");
       return;
+    }
+
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `You have ${players.length} player(s). Are you sure you want to start the game?`
+    );
+    if (!confirmed) {
+      return; // Exit if the user cancels
     }
 
     try {
@@ -58,6 +78,7 @@ const HomeScreen = ({ onStartGame }) => {
               value={username}
               placeholder="Enter Username"
               onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={handleKeyPress} // Detect Enter key
             />
             <button
               type="submit"
@@ -68,6 +89,7 @@ const HomeScreen = ({ onStartGame }) => {
           </form>
 
           <button
+            type="button"
             onClick={handleJoin}
             className="rounded-xl bg-blue-700 text-white font-mono text-3xl p-4 mt-10 hover:bg-blue-900"
           >
