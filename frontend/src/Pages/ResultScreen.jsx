@@ -1,12 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
-const ResultsPage = ({ resetGame }) => {
+const ResultsPage = ({ resetGame, players }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { verdict, answers, players } = state || {
+  const { verdict, answers } = state || {
     verdict: "",
     answers: [],
-    players: [],
   };
 
   const handleReplay = async () => {
@@ -17,6 +16,13 @@ const ResultsPage = ({ resetGame }) => {
       console.log("Error Restarting Game: ", error.message);
     }
   };
+
+  // Find the index of the specific character
+  const highlightEndIndex = verdict.indexOf("}") + 1; // Include the character
+  const highlightedText =
+    highlightEndIndex > 0 ? verdict.slice(0, highlightEndIndex) : "";
+  const remainingText =
+    highlightEndIndex > 0 ? verdict.slice(highlightEndIndex) : verdict;
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
@@ -38,7 +44,12 @@ const ResultsPage = ({ resetGame }) => {
         <h2 className="mt-6 text-xl font-semibold text-gray-700">
           Judge's Verdict:
         </h2>
-        <p className="text-gray-800 mt-2">{verdict}</p>
+        <p className="text-black mt-2 text-xl">
+          <span className="text-blue-500 font-bold">{highlightedText}</span>
+          <br />
+          <br />
+          {remainingText}
+        </p>
       </div>
 
       <button

@@ -25,12 +25,12 @@ router.post("/generate-question", async (req, res) => {
     res.status(500).json({ error: "Failed to generate question" });
   }
 });
-
 router.post("/generate-verdict", async (req, res) => {
   try {
-    const { opinions, question } = req.body;
+    const { opinions, question, players } = req.body;
 
     console.log(question);
+    console.log(players);
     const opinionList = opinions
       .map((opinion, index) => `${index + 1}. ${opinion}`)
       .join(" ");
@@ -41,9 +41,11 @@ router.post("/generate-verdict", async (req, res) => {
         
         and here is the question: ${question},
 
+        and these are the players: ${players},
+
         Please evaluate each response independently in accordance to the question, ranking them from the best to the worst based on logical reasoning, clarity, and relevance. The "best" response is the one that makes the most sense and is the most logical in accordance to the question. 
         If any responses are irrelevant to the question or do not make sense, rank them as the worst. Return a ranking with the format: 
-        { 1: {index of the best response}, 2: {index of the second-best}, 3: {index of the third-best}, ... }. The justifications should be concise and to the point and not more than 2 sentences. Provide each reasoning on a new line along with the ranking on a new line.
+        {{index of the best response} : {player name corresponding to that index}, {index of the second-best} : {player name corresponding to the index of secon-best}, {index of the third-best} : {name of player correspoinding to index of third-best}, ... }. The justifications should be concise and to the point and not more than 2 sentences. Provide each reasoning on a new line along with the ranking on a new line.
          
         
         For example, if the responses are:
@@ -52,13 +54,12 @@ router.post("/generate-verdict", async (req, res) => {
         3. Opinion 3
         
         Your response should look like this on a new line with a space in between:
-        RANKING: { 1: 2, 2: 1, 3: 3 }
+        RANKING OF RESPONSES: { 2: {player name of opinion 2}, 1: {player name of opinion 1}, 3: {player name of opinion 3} }
       `;
 
     const result = await model.generateContent(prompt);
     const verdict = result.response.text();
 
-    // Send the ranking as JSON
     res.status(200).json({ verdict });
   } catch (error) {
     console.error("Error generating verdict:", error.message);

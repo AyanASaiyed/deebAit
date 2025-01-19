@@ -71,6 +71,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
         body: JSON.stringify({
           opinions: answers.map((answer) => answer.answer),
           question,
+          players,
         }),
       });
 
@@ -80,7 +81,6 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
       }
 
       const data = await res.json();
-      // Pass the verdict along with the answers to the ResultsPage
       navigate("/result", {
         state: { verdict: data.verdict, answers: answers, players: players },
       });

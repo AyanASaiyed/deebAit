@@ -58,7 +58,7 @@ function App() {
           path="/result"
           element={
             players.length > 0 ? (
-              <ResultScreen results={results} resetGame={resetGame} />
+              <ResultScreen results={results} resetGame={resetGame} players={players} />
             ) : (
               <Navigate to={"/"} />
             )
