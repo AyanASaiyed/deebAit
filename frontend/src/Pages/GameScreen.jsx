@@ -65,12 +65,12 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
     onJudgeAnswers(answers);
 
     try {
-      // Send the answers to the backend to generate a verdict
       const res = await fetch("http://localhost:4000/ai/generate-verdict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          opinions: answers.map((answer) => answer.answer), // Extract the answers as opinions
+          opinions: answers.map((answer) => answer.answer),
+          question,
         }),
       });
 
