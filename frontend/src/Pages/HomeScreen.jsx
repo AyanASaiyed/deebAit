@@ -49,21 +49,18 @@ const HomeScreen = ({ onStartGame }) => {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col">
-      <div className="text-black font-mono text-5xl mt-10">
+    <div className="flex justify-center items-center flex-col overflow-scroll">
+      <div className="text-black font-bold font-mono text-5xl mt-10">
         Welcome to Deeb<span className="text-blue-500">Ai</span>t!
       </div>
       <div className="h-[80vh] w-[80vw] rounded-xl mt-5 bg-blue-500 bg-opacity-15 border-4 border-white flex-col flex">
         <div className="flex items-center justify-center h-screen flex-col space-y-4">
-          <div className="text-xl font-mono text-black mb-4">
+          <div className="ext-xl rounded-xl border-2 p-4 border-white font-mono text-white mb-4">
             {players.length > 0 ? (
               <ul>
                 {players.map((player, index) => (
-                  <li
-                    key={index}
-                    className="text-2xl h-[4vh] bg-slate-400 border-2 border-white rounded-xl p-1 mt-2"
-                  >
-                    {player}
+                  <li key={index} className="text-2xl h-[4vh] rounded-xl ">
+                    Player {index + 1}: {player}
                   </li>
                 ))}
               </ul>

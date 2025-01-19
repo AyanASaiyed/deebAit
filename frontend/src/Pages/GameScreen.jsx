@@ -9,6 +9,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   const [submissions, setSubmissions] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState("Loading question...");
+  const [rankings, setRankings] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +44,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
 
   useEffect(() => {
     if (timeLeft === 0 || submissions === players.length) {
+      setTimeLeft(0);
       handleJudging();
     }
   }, [timeLeft, submissions]);
@@ -69,6 +71,7 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
     ]);
     setSubmissions((prev) => prev + 1);
     setAnswer(""); // Clear the input
+    setTimeLeft(120); //Reset timer
   };
 
   const handleJudging = async () => {
@@ -93,7 +96,12 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
       const data = await res.json();
       // Pass the verdict along with the answers to the ResultsPage
       navigate("/result", {
-        state: { verdict: data.verdict, answers: answers, players: players },
+        state: {
+          verdict: data.verdict,
+          answers: answers,
+          players: players,
+          rankings: rankings,
+        },
       });
     } catch (error) {
       console.error("Error generating verdict: ", error.message);
@@ -101,40 +109,48 @@ const GameScreen = ({ players, currentPlayerIndex, onJudgeAnswers }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Question</h2>
-      <p className="text-lg text-gray-600 mb-8 text-center">{question}</p>
-      <p className="text-lg text-gray-600 mb-8 text-center">
-        Player: {players[submissions]}
-      </p>
-      <textarea
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        placeholder="Write your answer here..."
-        rows={5}
-        className="w-3/4 p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
-        disabled={timeLeft === 0 || submissions === players.length}
-      />
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="h-[80vh] w-[80vw] rounded-xl bg-blue-500 bg-opacity-15 border-4 border-white flex-col flex">
+        <div className="flex items-center justify-center h-screen flex-col ">
+          <p className="text-3xl font-mono text-white border-4 p-3 rounded-xl mb-4">
+            Time Left: {timeLeft} seconds
+          </p>
+          <h2 className="text-4xl font-bold font-mono text-black mb-4">
+            Question
+          </h2>
+          <p className="text-lg text-gray-600 font-mono mb-4 text-center">
+            {question}
+          </p>
+          <p className="text-lg text-gray-600 font-mono mb-4 text-center">
+            Player: {players[submissions]}
+          </p>
+          <textarea
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            placeholder="Write your answer here..."
+            rows={5}
+            className="w-3/4 p-4 border font-mono border-gray-300 rounded-lg shadow-md focus:outline-none justify-center focus:ring-2 focus:ring-blue-500 mb-6"
+            disabled={timeLeft === 0 || submissions === players.length}
+          />
 
-      <div className="flex flex-col items-center">
-        <p className="text-sm text-gray-500 mb-4">
-          Time Left: {timeLeft} seconds
-        </p>
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className={`${
-            timeLeft === 0 || submissions === players.length
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white font-semibold py-2 px-6 rounded shadow-md transition`}
-          disabled={timeLeft === 0 || submissions === players.length}
-        >
-          Submit Answer
-        </button>
-        <p className="text-sm text-gray-500 mt-4">
-          Submissions: {submissions}/{players.length}
-        </p>
+          <div className="flex flex-col items-center">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className={`${
+                timeLeft === 0 || submissions === players.length
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600"
+              } text-white font-semibold font-mono py-2 px-6 rounded shadow-md transition`}
+              disabled={timeLeft === 0 || submissions === players.length}
+            >
+              Submit Answer
+            </button>
+            <p className="text-sm font-mono text-gray-500 mt-4">
+              Submissions: {submissions}/{players.length}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
